@@ -1,0 +1,904 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>College Event Hub</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+        
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        header {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #667eea;
+            text-decoration: none;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: #667eea;
+            border: 2px solid #667eea;
+        }
+
+        .btn-secondary:hover {
+            background: #667eea;
+            color: white;
+        }
+
+        .main-content {
+            padding: 2rem 0;
+        }
+
+        .hero-section {
+            text-align: center;
+            padding: 3rem 0;
+            color: white;
+        }
+
+        .hero-section h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-section p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .search-filter-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .search-bar {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 25px;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .search-bar:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .filter-group label {
+            font-weight: 500;
+            color: #666;
+        }
+
+        select, input[type="date"] {
+            padding: 0.5rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 0.9rem;
+        }
+
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .event-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .event-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+        }
+
+        .event-image {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3rem;
+        }
+
+        .event-content {
+            padding: 1.5rem;
+        }
+
+        .event-category {
+            background: #667eea;
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin-bottom: 1rem;
+        }
+
+        .event-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #333;
+        }
+
+        .event-details {
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .event-details div {
+            margin-bottom: 0.3rem;
+        }
+
+        .event-actions {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-small {
+            padding: 0.4rem 0.8rem;
+            font-size: 0.8rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .close {
+            float: right;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 1rem;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: none;
+            z-index: 1001;
+        }
+
+        .upcoming-badge {
+            background: #ff6b6b;
+            color: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+
+        .stats-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.9);
+            padding: 1.5rem;
+            border-radius: 15px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #666;
+            margin-top: 0.5rem;
+        }
+
+        @media (max-width: 768px) {
+            .hero-section h1 {
+                font-size: 2rem;
+            }
+
+            .filters {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .events-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="#" class="logo">🎓 College Event Hub</a>
+                <div class="user-actions">
+                    <button class="btn btn-secondary" onclick="openCreateEventModal()">Create Event</button>
+                    <button class="btn btn-primary" onclick="showNotifications()">🔔 Reminders</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container main-content">
+        <section class="hero-section">
+            <h1>Discover Campus Events</h1>
+            <p>Stay connected with all the exciting events happening around campus</p>
+        </section>
+
+        <section class="stats-section">
+            <div class="stat-card">
+                <div class="stat-number" id="totalEvents">0</div>
+                <div class="stat-label">Total Events</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="upcomingEvents">0</div>
+                <div class="stat-label">Upcoming Events</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="myReminders">0</div>
+                <div class="stat-label">My Reminders</div>
+            </div>
+        </section>
+
+        <section class="search-filter-section">
+            <input type="text" class="search-bar" id="searchInput" placeholder="🔍 Search events by title, category, or department...">
+            
+            <div class="filters">
+                <div class="filter-group">
+                    <label for="categoryFilter">Category</label>
+                    <select id="categoryFilter">
+                        <option value="">All Categories</option>
+                        <option value="academic">Academic</option>
+                        <option value="cultural">Cultural</option>
+                        <option value="sports">Sports</option>
+                        <option value="technical">Technical</option>
+                        <option value="workshop">Workshop</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="departmentFilter">Department</label>
+                    <select id="departmentFilter">
+                        <option value="">All Departments</option>
+                        <option value="cse">Computer Science</option>
+                        <option value="ece">Electronics</option>
+                        <option value="mech">Mechanical</option>
+                        <option value="civil">Civil</option>
+                        <option value="general">General</option>
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="dateFilter">Date</label>
+                    <input type="date" id="dateFilter">
+                </div>
+                
+                <div class="filter-group">
+                    <label>&nbsp;</label>
+                    <button class="btn btn-primary" onclick="clearFilters()">Clear Filters</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="events-grid" id="eventsGrid">
+            <!-- Events will be dynamically populated here -->
+        </section>
+    </main>
+
+    <!-- Event Details Modal -->
+    <div id="eventModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <div id="eventModalContent">
+                <!-- Event details will be populated here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Create Event Modal -->
+    <div id="createEventModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeCreateEventModal()">&times;</span>
+            <h2>Create New Event</h2>
+            <form id="createEventForm">
+                <div style="margin-bottom: 1rem;">
+                    <label>Event Title:</label>
+                    <input type="text" id="eventTitle" required style="width: 100%; padding: 0.5rem; margin-top: 0.3rem; border: 1px solid #ddd; border-radius: 5px;">
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label>Description:</label>
+                    <textarea id="eventDescription" required style="width: 100%; height: 100px; padding: 0.5rem; margin-top: 0.3rem; border: 1px solid #ddd; border-radius: 5px;"></textarea>
+                </div>
+                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                    <div style="flex: 1;">
+                        <label>Date:</label>
+                        <input type="date" id="eventDate" required style="width: 100%; padding: 0.5rem; margin-top: 0.3rem; border: 1px solid #ddd; border-radius: 5px;">
+                    </div>
+                    <div style="flex: 1;">
+                        <label>Time:</label>
+                        <input type="time" id="eventTime" required style="width: 100%; padding: 0.5rem; margin-top: 0.3rem; border: 1px solid #ddd; border-radius: 5px;">
+                    </div>
+                </div>
+                <div style="display: flex; gap: 1rem; margin-bottom: 1rem;">
+                    <div style="flex: 1;">
+                        <label>Category:</label>
+                        <select id="eventCategory" required style="width: 100%; padding: 0.5rem; margin-top: 0.3rem; border: 1px solid #ddd; border-radius: 5px;">
+                            <option value="">Select Category</option>
+                            <option value="academic">Academic</option>
+                            <option value="cultural">Cultural</option>
+                            <option value="sports">Sports</option>
+                            <option value="technical">Technical</option>
+                            <option value="workshop">Workshop</option>
+                        </select>
+                    </div>
+                    <div style="flex: 1;">
+                        <label>Department:</label>
+                        <select id="eventDepartment" required style="width: 100%; padding: 0.5rem; margin-top: 0.3rem; border: 1px solid #ddd; border-radius: 5px;">
+                            <option value="">Select Department</option>
+                            <option value="cse">Computer Science</option>
+                            <option value="ece">Electronics</option>
+                            <option value="mech">Mechanical</option>
+                            <option value="civil">Civil</option>
+                            <option value="general">General</option>
+                        </select>
+                    </div>
+                </div>
+                <div style="margin-bottom: 1rem;">
+                    <label>Venue:</label>
+                    <input type="text" id="eventVenue" required style="width: 100%; padding: 0.5rem; margin-top: 0.3rem; border: 1px solid #ddd; border-radius: 5px;">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Create Event</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Notification -->
+    <div id="notification" class="notification">
+        <span id="notificationText"></span>
+    </div>
+
+    <script>
+        // Sample event data (simulating database)
+        let events = [
+            {
+                id: 1,
+                title: "Annual Tech Fest 2024",
+                description: "Join us for the biggest technical festival of the year featuring coding competitions, robotics, and innovation showcases.",
+                date: "2024-09-15",
+                time: "09:00",
+                venue: "Main Auditorium",
+                category: "technical",
+                department: "cse",
+                organizer: "Computer Science Department",
+                image: "🚀"
+            },
+            {
+                id: 2,
+                title: "Cultural Night",
+                description: "Experience the rich cultural diversity of our college through dance, music, and theatrical performances.",
+                date: "2024-09-20",
+                time: "18:00",
+                venue: "College Ground",
+                category: "cultural",
+                department: "general",
+                organizer: "Cultural Committee",
+                image: "🎭"
+            },
+            {
+                id: 3,
+                title: "Sports Championship",
+                description: "Inter-department sports competition including cricket, football, basketball, and athletics.",
+                date: "2024-09-25",
+                time: "08:00",
+                venue: "Sports Complex",
+                category: "sports",
+                department: "general",
+                organizer: "Sports Committee",
+                image: "🏆"
+            },
+            {
+                id: 4,
+                title: "AI Workshop",
+                description: "Hands-on workshop on Artificial Intelligence and Machine Learning fundamentals.",
+                date: "2024-09-18",
+                time: "14:00",
+                venue: "Lab 1, CS Building",
+                category: "workshop",
+                department: "cse",
+                organizer: "Dr. Smith",
+                image: "🤖"
+            }
+        ];
+
+        let reminders = [];
+        let eventIdCounter = events.length + 1;
+
+        // DOM elements
+        const searchInput = document.getElementById('searchInput');
+        const categoryFilter = document.getElementById('categoryFilter');
+        const departmentFilter = document.getElementById('departmentFilter');
+        const dateFilter = document.getElementById('dateFilter');
+        const eventsGrid = document.getElementById('eventsGrid');
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            renderEvents();
+            updateStats();
+            
+            // Add event listeners
+            searchInput.addEventListener('input', filterEvents);
+            categoryFilter.addEventListener('change', filterEvents);
+            departmentFilter.addEventListener('change', filterEvents);
+            dateFilter.addEventListener('change', filterEvents);
+            
+            // Add form submission handler
+            document.getElementById('createEventForm').addEventListener('submit', handleCreateEvent);
+            
+            // Set minimum date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('eventDate').setAttribute('min', today);
+        });
+          document.addEventListener('DOMContentLoaded', function () {
+                renderEvents();
+                updateStats();
+
+                // Add a custom event here
+                events.push({
+                    id: events.length + 1,
+                    title: "Coding Hackathon 2025",
+                    description: "A 24-hour hackathon on campus for innovative coding projects.",
+                    date: "2025-09-30",
+                    time: "10:00",
+                    venue: "Innovation Lab",
+                    category: "technical",
+                    department: "cse",
+                    organizer: "Tech Club",
+                    image: "💻"
+                });
+
+                renderEvents();
+                updateStats();
+
+                // Event listeners
+                searchInput.addEventListener('input', filterEvents);
+                categoryFilter.addEventListener('change', filterEvents);
+                departmentFilter.addEventListener('change', filterEvents);
+                dateFilter.addEventListener('change', filterEvents);
+
+                document.getElementById('createEventForm').addEventListener('submit', handleCreateEvent);
+
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('eventDate').setAttribute('min', today);
+            });
+
+
+        function renderEvents(eventsToShow = events) {
+            eventsGrid.innerHTML = '';
+            
+            if (eventsToShow.length === 0) {
+                eventsGrid.innerHTML = '<div style="grid-column: 1 / -1; text-align: center; padding: 2rem; color: #666;">No events found matching your criteria.</div>';
+                return;
+            }
+            
+            eventsToShow.forEach(event => {
+                const eventCard = createEventCard(event);
+                eventsGrid.appendChild(eventCard);
+            });
+        }
+
+        function createEventCard(event) {
+            const card = document.createElement('div');
+            card.className = 'event-card';
+            card.onclick = () => openEventModal(event);
+            
+            const isUpcoming = new Date(event.date) >= new Date();
+            
+            card.innerHTML = `
+                <div class="event-image" style="position: relative;">
+                    ${event.image}
+                    ${isUpcoming ? '<div class="upcoming-badge">Upcoming</div>' : ''}
+                </div>
+                <div class="event-content">
+                    <span class="event-category">${event.category.toUpperCase()}</span>
+                    <h3 class="event-title">${event.title}</h3>
+                    <div class="event-details">
+                        <div>📅 ${formatDate(event.date)}</div>
+                        <div>⏰ ${formatTime(event.time)}</div>
+                        <div>📍 ${event.venue}</div>
+                        <div>🏢 ${getDepartmentName(event.department)}</div>
+                    </div>
+                    <div class="event-actions">
+                        <button class="btn btn-primary btn-small" onclick="event.stopPropagation(); setReminder(${event.id})">
+                            Set Reminder
+                        </button>
+                        <button class="btn btn-secondary btn-small" onclick="event.stopPropagation(); addToCalendar(${event.id})">
+                            Add to Calendar
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            return card;
+        }
+
+        function filterEvents() {
+            const searchTerm = searchInput.value.toLowerCase();
+            const categoryValue = categoryFilter.value;
+            const departmentValue = departmentFilter.value;
+            const dateValue = dateFilter.value;
+            
+            const filteredEvents = events.filter(event => {
+                const matchesSearch = !searchTerm || 
+                    event.title.toLowerCase().includes(searchTerm) ||
+                    event.description.toLowerCase().includes(searchTerm) ||
+                    event.category.toLowerCase().includes(searchTerm) ||
+                    getDepartmentName(event.department).toLowerCase().includes(searchTerm);
+                
+                const matchesCategory = !categoryValue || event.category === categoryValue;
+                const matchesDepartment = !departmentValue || event.department === departmentValue;
+                const matchesDate = !dateValue || event.date === dateValue;
+                
+                return matchesSearch && matchesCategory && matchesDepartment && matchesDate;
+            });
+            
+            renderEvents(filteredEvents);
+        }
+
+        function clearFilters() {
+            searchInput.value = '';
+            categoryFilter.value = '';
+            departmentFilter.value = '';
+            dateFilter.value = '';
+            renderEvents();
+        }
+
+        function openEventModal(event) {
+            const modal = document.getElementById('eventModal');
+            const modalContent = document.getElementById('eventModalContent');
+            
+            modalContent.innerHTML = `
+                <div class="event-image" style="height: 150px; margin-bottom: 1rem; border-radius: 10px;">
+                    ${event.image}
+                </div>
+                <h2>${event.title}</h2>
+                <p style="margin: 1rem 0; color: #666; line-height: 1.6;">${event.description}</p>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1rem 0;">
+                    <div><strong>📅 Date:</strong> ${formatDate(event.date)}</div>
+                    <div><strong>⏰ Time:</strong> ${formatTime(event.time)}</div>
+                    <div><strong>📍 Venue:</strong> ${event.venue}</div>
+                    <div><strong>🏷️ Category:</strong> ${event.category.toUpperCase()}</div>
+                    <div><strong>🏢 Department:</strong> ${getDepartmentName(event.department)}</div>
+                    <div><strong>👤 Organizer:</strong> ${event.organizer}</div>
+                </div>
+                <div style="margin-top: 2rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+                    <button class="btn btn-primary" onclick="setReminder(${event.id})">Set Reminder</button>
+                    <button class="btn btn-secondary" onclick="addToCalendar(${event.id})">Add to Calendar</button>
+                </div>
+            `;
+            
+            modal.style.display = 'flex';
+        }
+
+        function closeModal() {
+            document.getElementById('eventModal').style.display = 'none';
+        }
+
+        function openCreateEventModal() {
+            document.getElementById('createEventModal').style.display = 'flex';
+        }
+
+        function closeCreateEventModal() {
+            document.getElementById('createEventModal').style.display = 'none';
+            document.getElementById('createEventForm').reset();
+        }
+
+        function handleCreateEvent(e) {
+            e.preventDefault();
+            
+            const newEvent = {
+                id: eventIdCounter++,
+                title: document.getElementById('eventTitle').value,
+                description: document.getElementById('eventDescription').value,
+                date: document.getElementById('eventDate').value,
+                time: document.getElementById('eventTime').value,
+                venue: document.getElementById('eventVenue').value,
+                category: document.getElementById('eventCategory').value,
+                department: document.getElementById('eventDepartment').value,
+                organizer: "Current User",
+                image: getCategoryIcon(document.getElementById('eventCategory').value)
+            };
+            
+            events.unshift(newEvent);
+            renderEvents();
+            updateStats();
+            closeCreateEventModal();
+            showNotification('Event created successfully!');
+        }
+
+        function setReminder(eventId) {
+            const event = events.find(e => e.id === eventId);
+            if (event && !reminders.find(r => r.eventId === eventId)) {
+                reminders.push({
+                    eventId: eventId,
+                    eventTitle: event.title,
+                    eventDate: event.date,
+                    eventTime: event.time
+                });
+                updateStats();
+                showNotification(`Reminder set for ${event.title}`);
+                
+                // Schedule notification (simplified - in real app you'd use service workers)
+                scheduleNotification(event);
+            } else if (reminders.find(r => r.eventId === eventId)) {
+                showNotification('Reminder already set for this event!');
+            }
+        }
+
+        function addToCalendar(eventId) {
+            const event = events.find(e => e.id === eventId);
+            if (event) {
+                // Create calendar event URL (for Google Calendar)
+                const startDate = new Date(`${event.date}T${event.time}`);
+                const endDate = new Date(startDate.getTime() + (2 * 60 * 60 * 1000)); // Assume 2 hours duration
+                
+                const calendarUrl = `https://calendar.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(event.title)}&dates=${startDate.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')}/${endDate.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')}&details=${encodeURIComponent(event.description)}&location=${encodeURIComponent(event.venue)}`;
+                
+                window.open(calendarUrl, '_blank');
+                showNotification('Opening calendar...');
+            }
+        }
+
+        function scheduleNotification(event) {
+            // Simple notification scheduling (in a real app, you'd use service workers)
+            const eventTime = new Date(`${event.date}T${event.time}`);
+            const now = new Date();
+            const timeDiff = eventTime.getTime() - now.getTime();
+            
+            if (timeDiff > 0 && timeDiff < 24 * 60 * 60 * 1000) { // If within 24 hours
+                setTimeout(() => {
+                    if (Notification.permission === 'granted') {
+                        new Notification(`Event Reminder: ${event.title}`, {
+                            body: `Starting in 1 hour at ${event.venue}`,
+                            icon: '/favicon.ico'
+                        });
+                    }
+                }, Math.max(0, timeDiff - 60 * 60 * 1000)); // Notify 1 hour before
+            }
+        }
+
+        function showNotifications() {
+            if (reminders.length === 0) {
+                showNotification('No reminders set');
+                return;
+            }
+            
+            let message = `You have ${reminders.length} reminder(s):\n`;
+            reminders.forEach(reminder => {
+                message += `• ${reminder.eventTitle} - ${formatDate(reminder.eventDate)}\n`;
+            });
+            
+            alert(message);
+        }
+
+        function showNotification(message) {
+            const notification = document.getElementById('notification');
+            const notificationText = document.getElementById('notificationText');
+            
+            notificationText.textContent = message;
+            notification.style.display = 'block';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+
+        function updateStats() {
+            const totalEvents = events.length;
+            const upcomingEvents = events.filter(e => new Date(e.date) >= new Date()).length;
+            const myReminders = reminders.length;
+            
+            document.getElementById('totalEvents').textContent = totalEvents;
+            document.getElementById('upcomingEvents').textContent = upcomingEvents;
+            document.getElementById('myReminders').textContent = myReminders;
+        }
+
+        // Helper functions
+        function formatDate(dateString) {
+            return new Date(dateString).toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+        }
+
+        function formatTime(timeString) {
+            return new Date(`2000-01-01T${timeString}`).toLocaleTimeString('en-US', {
+                hour: 'numeric',
+                minute: '2-digit',
+                hour12: true
+            });
+        }
+
+        function getDepartmentName(dept) {
+            const departments = {
+                'cse': 'Computer Science',
+                'ece': 'Electronics',
+                'mech': 'Mechanical',
+                'civil': 'Civil',
+                'general': 'General'
+            };
+            return departments[dept] || dept;
+        }
+
+        function getCategoryIcon(category) {
+            const icons = {
+                'academic': '📚',
+                'cultural': '🎭',
+                'sports': '🏆',
+                'technical': '🚀',
+                'workshop': '🛠️'
+            };
+            return icons[category] || '📅';
+        }
+
+        // Request notification permission
+        if ('Notification' in window && Notification.permission === 'default') {
+            Notification.requestPermission();
+        }
+
+               
+            window.onclick = function (e) {
+            const eventModal = document.getElementById('eventModal');
+            const createEventModalEl = document.getElementById('createEventModal');
+
+            if (e.target === eventModal) {
+                closeModal();
+            }
+            if (e.target === createEventModalEl) {
+                closeCreateEventModal();
+            }
+        };
+    </script>
+</body>
+</html>window.onclick = function (e) {
+            const eventModal = document.getElementById('eventModal');
+            const createEventModalEl = document.getElementById('createEventModal');
+
+            if (e.target === eventModal) {
+                closeModal();
+            }
+            if (e.target === createEventModalEl) {
+                closeCreateEventModal();
+            }
+        };
+    </script>
+</body>
+</html>
